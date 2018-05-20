@@ -109,7 +109,6 @@ void getNonBlank(){
         getChar();
 }
 
-
 int lex()
 {
     lexLen = 0;
@@ -155,19 +154,19 @@ int lex()
         lexeme[3] =  0;
         break;
     }
-    cout<<"Next token is: "<<nextToken<<", Next lexeme is "<<lexeme<<endl;
+    //cout<<"Next token is: "<<nextToken<<", Next lexeme is "<<lexeme<<endl;
     return nextToken;
 }
 
 //Recursive-Descent Parser
 
+int cheek = 1;
 void exprs();
 void expr();
 void term();
 void factor();
 void exp();
-
-
+void error(int n);
 
 void exprs(){
     expr();
@@ -178,12 +177,16 @@ void exprs(){
             if(nextToken == SEMICOLON)
                 lex();
             else
-                cout<<"error333";
+                error(1);
         }
-        cout<<"parse succeed"<<endl;
+        if(cheek)
+            cout<<"parse succeed"<<endl;
+        else
+            cout<<"parse fail"<<endl;
     }
     else
-        cout<<"error22";
+        cout<<"parse fail"<<endl;
+        //error(2);
 }
 
 void expr(){
@@ -223,12 +226,15 @@ void exp(){
         if(nextToken == RIGHT_PAREN)
             lex();
         else
-            cout<<"error";
+            error(3);
     }
     else
-        cout<<"error1";
+        error(4);
 }
 
+void error(int n){
+    cheek = 0;
+}
 
 int main(){
     if((in_fp = fopen("C:\\Users\\Mr-Fish\\Desktop\\input.txt", "r")) == NULL)
