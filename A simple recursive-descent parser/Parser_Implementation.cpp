@@ -52,10 +52,6 @@ int lookup(char ch){
         addChar();
         nextToken = ADD_OP;
         break;
-    case '-':
-        addChar();
-        nextToken = SUB_OP;
-        break;
     case '*':
         addChar();
         nextToken = MULT_OP;
@@ -97,6 +93,8 @@ void getChar(){
             charClass = DIGIT;
         else if(nextChar=='.')
             charClass = DOT;
+        else if(nextChar=='-')
+            charClass = SUB_OP;
         else charClass = UNKNOWN;
     }
     else
@@ -141,6 +139,33 @@ int lex()
         else
             nextToken = INT_LIT;
         break;
+    case SUB_OP:
+        addChar();
+        getChar();
+        if(charClass == DIGIT){
+            while (charClass == DIGIT){
+                addChar();
+                getChar();
+            }
+            if (charClass == DOT){
+                addChar();
+                getChar();
+                while (charClass == DIGIT){
+                    addChar();
+                    getChar();
+                }
+                nextToken = REAL_LIT;
+                break;
+            }
+            else{
+                nextToken = INT_LIT;
+                break;
+            }
+        }
+        else{
+            nextToken = SUB_OP;
+            break;
+        }
     case UNKNOWN:
         lookup(nextChar);
         getChar();
