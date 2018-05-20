@@ -21,11 +21,13 @@ int lex();
 
 #define LETTER 0
 #define DIGIT 1
+#define DOT 2
 #define UNKNOWN 99
 
 #define INT_LIT 10
 #define INDET 11
 #define REAL_LIT 12
+
 #define ASSIGN_OP 20
 #define ADD_OP 21
 #define SUB_OP 22
@@ -35,6 +37,7 @@ int lex();
 #define RIGHT_PAREN 26
 #define SEMICOLON 27
 #define POWER 28
+
 
 int lookup(char ch){
     switch(ch){
@@ -93,6 +96,8 @@ void getChar(){
             charClass = LETTER;
         else if(isdigit(nextChar))
             charClass = DIGIT;
+        else if(nextChar=='.')
+            charClass = DOT;
         else charClass = UNKNOWN;
     }
     else
@@ -126,7 +131,17 @@ int lex()
             addChar();
             getChar();
         }
-        nextToken = INT_LIT;
+        if (charClass == DOT){
+            addChar();
+            getChar();
+            while (charClass == DIGIT){
+                addChar();
+                getChar();
+            }
+            nextToken = REAL_LIT;
+        }
+        else
+            nextToken = INT_LIT;
         break;
     case UNKNOWN:
         lookup(nextChar);
@@ -226,4 +241,3 @@ int main(){
 
     return 0;
 }
-
