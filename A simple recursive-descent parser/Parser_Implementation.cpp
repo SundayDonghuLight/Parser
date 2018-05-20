@@ -1,5 +1,4 @@
 #include<iostream>
-#include<string>
 #include<stdio.h>
 #include<ctype.h>
 using namespace std;
@@ -184,9 +183,10 @@ void exprs(){
         else
             cout<<"parse fail"<<endl;
     }
-    else
+    else{
+        error(1);
         cout<<"parse fail"<<endl;
-        //error(2);
+    }
 }
 
 void expr(){
@@ -226,14 +226,25 @@ void exp(){
         if(nextToken == RIGHT_PAREN)
             lex();
         else
-            error(3);
+            error(2);
     }
     else
-        error(4);
+        error(3);
 }
 
 void error(int n){
     cheek = 0;
+    switch(n){
+    case 1:
+        cout<<"Error Message - Lack of semicolon"<<endl;
+        break;
+    case 2:
+        cout<<"Error Message - Lack of right parenthesis"<<endl;
+        break;
+    case 3:
+        cout<<"Error Message - Non-permitted symbols"<<endl;
+        break;
+    }
 }
 
 int main(){
@@ -244,6 +255,5 @@ int main(){
         lex();
         exprs();
     }
-
     return 0;
 }
