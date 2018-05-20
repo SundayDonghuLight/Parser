@@ -1,9 +1,10 @@
 #include<iostream>
+#include<string>
 #include<stdio.h>
 #include<ctype.h>
 using namespace std;
 
-//Lexical
+//Lexical analysis
 
 int charClass;
 char lexeme[100];
@@ -24,6 +25,7 @@ int lex();
 
 #define INT_LIT 10
 #define INDET 11
+#define REAL_LIT 12
 #define ASSIGN_OP 20
 #define ADD_OP 21
 #define SUB_OP 22
@@ -31,6 +33,8 @@ int lex();
 #define DIV_OP 24
 #define LEFT_PAREN 25
 #define RIGHT_PAREN 26
+#define SEMICOLON 27
+#define POWER 28
 
 int lookup(char ch){
     switch(ch){
@@ -57,6 +61,14 @@ int lookup(char ch){
     case '/':
         addChar();
         nextToken = DIV_OP;
+        break;
+    case ';':
+        addChar();
+        nextToken = SEMICOLON;
+        break;
+    case '^':
+        addChar();
+        nextToken = POWER;
         break;
     default:
         addChar();
@@ -89,7 +101,7 @@ void getChar(){
 
 void getNonBlank(){
     while(isspace(nextChar))
-        getchar();
+        getChar();
 }
 
 
@@ -97,8 +109,6 @@ int lex()
 {
     lexLen = 0;
     getNonBlank();
-
-    getChar();
     switch (charClass){
     case LETTER:
         addChar();
@@ -136,8 +146,84 @@ int lex()
 
 //Recursive-Descent Parser
 
+void exprs();
+void expr();
+void term();
+void factor();
+void exp();
+
+
+
+void exprs(){
+    expr();
+    if(nextToken == SEMICOLON){
+        lex();
+        while(nextToken != EOF){
+            expr();
+            if(nextToken == SEMICOLON)
+                lex();
+            else
+                cout<<"error333";
+        }
+        cout<<"parse succeed"<<endl;
+    }
+    else
+        cout<<"error22";
+}
+
+void expr(){
+    term();
+    while(nextToken == ADD_OP || nextToken == SUB_OP){
+        lex();
+        term();
+    }
+}
+
+void term(){
+    factor();
+    while(nextToken == MULT_OP || nextToken == DIV_OP){
+        lex();
+        factor();
+    }
+}
+
+void factor(){
+    exp();
+    while(nextToken == POWER){
+        lex();
+        exp();
+    }
+}
+
+void exp(){
+    if(nextToken == INDET)
+        lex();
+    else if(nextToken == INT_LIT)
+        lex();
+    else if(nextToken == REAL_LIT)
+        lex();
+    else if(nextToken == LEFT_PAREN){
+        lex();
+        expr();
+        if(nextToken == RIGHT_PAREN)
+            lex();
+        else
+            cout<<"error";
+    }
+    else
+        cout<<"error1";
+}
 
 
 int main(){
+    if((in_fp = fopen("C:\\Users\\Mr-Fish\\Desktop\\input.txt", "r")) == NULL)
+        cout<<"ERROR - cannot open input.txt"<<endl;
+    else{
+        getChar();
+        lex();
+        exprs();
+    }
+
     return 0;
 }
+
